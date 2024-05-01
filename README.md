@@ -39,6 +39,6 @@ Tại CFF Explore, thêm vào một section mới với size 1000h rồi đặt 
 
 ![](https://github.com/0r3o-r3vEr5e/Chapter-2-Code-Injection/blob/main/Images/AddSection.png)
 
-![](https://github.com/0r3o-r3vEr5e/Chapter-2-Code-Injection/blob/main/Images/NewSection.png)
+![](https://github.com/0r3o-r3vEr5e/Chapter-2-Code-Injection/blob/main/Images/New%20SectionHeaders.png)
 
 
