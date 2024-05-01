@@ -41,4 +41,16 @@ Tại CFF Explore, thêm vào một section mới với size 1000h rồi đặt 
 
 ![](https://github.com/0r3o-r3vEr5e/Chapter-2-Code-Injection/blob/main/Images/New%20SectionHeaders.png)
 
+## Bước 2
 
+Tại OLLYDBG, mở file và dùng tổ hợp phím `Alt + M` để mở cửa số Memory Map của chương trình, tìm địa chỉ của section `.newsec` mà ta vừa thêm vào. Select section này là dùng phím `F7` để truy cập vào trong. Tại đây, ta chọn 2 vùng trống và thay đổi nội dung của nó bằng tổ hợp `Ctrl + E` để ta thêm 2 đoạn strings cần hiển thị trên MessageBox (ghi nhớ địa chỉ của 2 đoạn string này) rồi quay về dòng đầu tiên và bằng đầu viết một đoạn code sau:
+```ASM
+PUSH 0
+PUSH 101F030 ; Title String Address
+PUSH 101F050 ; Caption String Address
+PUSH 0
+CALL MessageBoxA
+JMP 1012475 ; Jump back to OEP
+```
+
+Kết quả sẽ giống như hình dưới
