@@ -53,7 +53,14 @@ CALL MessageBoxA
 JMP 1012475 ; Jump back to OEP
 ```
 
-Kết quả sẽ giống như hình dưới
+Kết quả sẽ giống như hình dưới (nhấn vào ảnh để xem thêm)
 
 ![](https://github.com/0r3o-r3vEr5e/Chapter-2-Code-Injection/blob/main/Images/ASM.png)
 
+Như vậy là ta đã hiểu được các bước ta cần làm trên code.
+
+# Code 
+
+## AddSection()
+
+Bước đầu tiên ta cần làm là thêm một section mới vào trong PE file của mình
