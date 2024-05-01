@@ -9,3 +9,8 @@ Và kết quả mong muốn của vấn đề sẽ như dưới đây:
 
 ![](https://github.com/0r3o-r3vEr5e/Chapter-2-Code-Injection/blob/main/Result.gif)
 
+# Explaination
+
+Chương trình 
+
+Chương trình `injected_calc.exe` của tôi đã được thực thi như sau: 
