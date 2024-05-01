@@ -7,10 +7,10 @@ VD: Có file notepad.exe. Bạn viết chương trình để chèn vào file đ�
 
 Và kết quả mong muốn của vấn đề sẽ như dưới đây:
 
-![](https://github.com/0r3o-r3vEr5e/Chapter-2-Code-Injection/blob/main/Result.gif)
+![](https://github.com/0r3o-r3vEr5e/Chapter-2-Code-Injection/blob/main/GIF/Result.gif)
 
 # Explaination
 
-Chương trình 
+Chương trình `calc.exe` gốc sẽ có các thông số như sau: 
 
 Chương trình `injected_calc.exe` của tôi đã được thực thi như sau: 
