@@ -7,10 +7,26 @@ VD: Có file notepad.exe. Bạn viết chương trình để chèn vào file đ�
 
 Và kết quả mong muốn của vấn đề sẽ như dưới đây:
 
-![](https://github.com/0r3o-r3vEr5e/Chapter-2-Code-Injection/blob/main/Result.gif)
+![](https://github.com/0r3o-r3vEr5e/Chapter-2-Code-Injection/blob/main/GIF/Result.gif)
 
 # Explaination
 
-Chương trình 
+Chương trình `calc.exe` gốc sẽ có các thông số đáng chú ý như sau: 
+
+![](https://github.com/0r3o-r3vEr5e/Chapter-2-Code-Injection/blob/main/Images/OEP.png)
+
+![](https://github.com/0r3o-r3vEr5e/Chapter-2-Code-Injection/blob/main/Images/Old%20SectionHeaders.png)
 
 Chương trình `injected_calc.exe` của tôi đã được thực thi như sau: 
+
+![](https://github.com/0r3o-r3vEr5e/Chapter-2-Code-Injection/blob/main/Images/New%20EP.png)
+
+![](https://github.com/0r3o-r3vEr5e/Chapter-2-Code-Injection/blob/main/Images/New%20SectionHeaders.png)
+
+> Tôi đã thêm một Section mới vào trong file và thay đổi `AddressOfEntryPoint` để có khi khởi động, chương trình sẽ thực thi code ở trong section này trước khi trở về code ở vị trí ban đầu. Từ đây ta có thể biết được các bước cần phải thực hiện để giải quyết vấn đề:
+> 
+> * Thêm một section mới vào cuối file
+> * Thêm code vào trong section 
+> * Thay đổi địa chỉ của EntryPoint trỏ đến section này
+
+
