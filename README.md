@@ -35,7 +35,7 @@ Trước khi code bằng C/C++, tôi đã thực hiện điều này một cách
 
 ## Bước 1
 
-Tại CFF Explore, thêm vào một section mới với size 1000h rồi đặt tên là `.newsec` và thay đổi các quyển cần thiết
+Tại CFF Explore, thêm vào một section mới với size 1000h rồi đặt tên là `.newsec`, thay đổi các quyển cần thiết và đổi `AddressOfEntryPoint` thành `VirtualAdress` của Section này
 
 ![](https://github.com/0r3o-r3vEr5e/Chapter-2-Code-Injection/blob/main/Images/AddSection.png)
 
@@ -56,3 +56,4 @@ JMP 1012475 ; Jump back to OEP
 Kết quả sẽ giống như hình dưới
 
 ![](https://github.com/0r3o-r3vEr5e/Chapter-2-Code-Injection/blob/main/Images/ASM.png)
+
