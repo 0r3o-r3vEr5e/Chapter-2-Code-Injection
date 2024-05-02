@@ -241,7 +241,7 @@ char shellCode[] =
 
 Đầu tiên ta cần đưa 2 đoạn string mà ta cần vào trong section tại một địa chỉ nhất định
 
-```
+```Cpp
 HANDLE hFile;
 HANDLE hFileMapping;
 LPVOID lpFileBase;
