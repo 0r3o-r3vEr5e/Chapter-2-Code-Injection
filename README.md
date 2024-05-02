@@ -60,6 +60,10 @@ Kết quả sẽ giống như hình dưới (nhấn vào ảnh để xem thêm)
 Để rõ hơn những thay đổi của file mới so với file gốc thì ta sẽ dùng PE-bear để so sánh sự khác biệt giữa chúng
 
 * File Header
+
+![](https://github.com/0r3o-r3vEr5e/Chapter-2-Code-Injection/blob/main/Images/FileHeaderDiff.png)
+
+Số 
 * Optional Header
 
 # Code (C/C++)
