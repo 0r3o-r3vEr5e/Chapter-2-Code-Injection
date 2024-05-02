@@ -59,13 +59,14 @@ Kết quả sẽ giống như hình dưới (nhấn vào ảnh để xem thêm)
 
 Để rõ hơn những thay đổi của file mới so với file gốc thì ta sẽ dùng PE-bear để so sánh sự khác biệt giữa chúng
 
-
+* File Header
+* Optional Header
 
 # Code (C/C++)
 
 ## Add New Section
 
-Trước khi thực hiện việc thêm một section mới, ta cần thực hiện căn chỉnh cho Section mới để sau khi thêm Section này mà không làm lỗi file.
+Trước khi thực hiện việc thêm một section mới, ta cần thực hiện căn chỉnh cho Section mới để sau khi thêm Section này mà không làm lỗi file. Khi ta thêm section mới trên CFF Explorer, việc căn chỉnh này đã được làm tự động nhưng khi code ta cần tự làm điều này.
 
 > `VirtualAddress` là bội số của `SectionAlignment`
 > 
