@@ -63,8 +63,27 @@ Kết quả sẽ giống như hình dưới (nhấn vào ảnh để xem thêm)
 
 ![](https://github.com/0r3o-r3vEr5e/Chapter-2-Code-Injection/blob/main/Images/FileHeaderDiff.png)
 
-Số 
+`NumberOfSections`: `0x00000003` -> `0x00000004`
+
 * Optional Header
+
+![](https://github.com/0r3o-r3vEr5e/Chapter-2-Code-Injection/blob/main/Images/OptionalHeaderDiff.png)
+
+`AddressOfEntryPoint`: `0x00012475` -> `0x0001F000`
+
+`ImageSize`: `0x0001F000` -> `0x00020000`
+
+* Section Content
+
+![](https://github.com/0r3o-r3vEr5e/Chapter-2-Code-Injection/blob/main/Images/SectionContent.png)
+
+_Code của ta cần làm được những điều sau:_
+
+_* Tạo một section mới trong file PE_
+
+_* Thêm shellcode vào trong section đó (đoạn code này sau khi thực thi xong sẽ thực hiện lại đoạn code gốc)_
+
+_* Thay đổi giá trị `AddressOfEntryPoint` trỏ đến Section vừa tạo_
 
 # Code (C/C++)
 
@@ -197,4 +216,4 @@ BOOL AddSection(const char* filename) {
 
 ## Add Code Into New Section
 
-Trước đấy ta đã thực hiện thủ công việc thêm code vào trong section. Để có thể biết rõ hơn về những gì được thêm vào Section đó, ta dùng PE-bear để so sánh sự khác biệt giữa file đã bị thay đổi và file gốc.
+
