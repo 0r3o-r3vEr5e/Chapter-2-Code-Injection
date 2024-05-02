@@ -57,11 +57,13 @@ Kết quả sẽ giống như hình dưới (nhấn vào ảnh để xem thêm)
 
 ![](https://github.com/0r3o-r3vEr5e/Chapter-2-Code-Injection/blob/main/Images/ASM.png)
 
-Như vậy là ta đã hiểu được các bước ta cần làm trên code.
+Để rõ hơn những thay đổi của file mới so với file gốc thì ta sẽ dùng PE-bear để so sánh sự khác biệt giữa chúng
+
+
 
 # Code (C/C++)
 
-## AddSection()
+## Add New Section
 
 Trước khi thực hiện việc thêm một section mới, ta cần thực hiện căn chỉnh cho Section mới để sau khi thêm Section này mà không làm lỗi file.
 
@@ -165,6 +167,7 @@ BOOL AddSection(const char* filename) {
         ((PIMAGE_SECTION_HEADER)(ntHeaders + 1) + ntHeaders->FileHeader.NumberOfSections - 1)->Misc.VirtualSize,
         ntHeaders->OptionalHeader.SectionAlignment);
     sectionHeader->Characteristics = 0xE00000E0;
+    // 0xE0000E0: IMAGE_SCN_MEM_EXECUTE | IMAGE_SCN_MEM_READ | IMAGE_SCN_MEM_WRITE | IMAGE_SCN_CNT_CODE | IMAGE_SCN_CNT_INITIALIZED_DATA | IMAGE_SCN_CNT_UNINITIALIZED_DATA
 
     // Update the number of sections
     ntHeaders->FileHeader.NumberOfSections++;
@@ -186,3 +189,7 @@ BOOL AddSection(const char* filename) {
     return TRUE;
 }
 ```
+
+## Add Code Into New Section
+
+Trước đấy ta đã thực hiện thủ công việc thêm code vào trong section. Để có thể biết rõ hơn về những gì được thêm vào Section đó, ta dùng PE-bear để so sánh sự khác biệt giữa file đã bị thay đổi và file gốc.
