@@ -374,4 +374,4 @@ memcpy((PBYTE)lpFileBase + sectionHeader->PointerToRawData, shellCode, sizeof(sh
 ntHeaders->OptionalHeader.AddressOfEntryPoint = sectionHeader->VirtualAddress;
 ```
 
-Source code đầy đủ [tại đây](https://github.com/0r3o-r3vEr5e/Chapter-2-Code-Injection/blob/main/inject.cpp)
+Source code đầy đủ [tại đây](https://github.com/0r3o-r3vEr5e/Episode-2-PE-Code-Injector/blob/main/Code/Chapter_1.cpp)
